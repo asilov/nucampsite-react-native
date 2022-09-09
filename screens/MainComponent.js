@@ -7,8 +7,16 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '
 import HomeScreen from './HomeScreen';
 import AboutScreen from './AboutScreen';
 import ContactScreen from './ContactScreen';
+import ReservationScreen from './ReservationScreen';
 import { Icon } from 'react-native-elements';
 import logo from '../assets/images/logo.png';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { fetchPartners } from '../features/partners/partnersSlice';
+import { fetchCampsites } from '../features/campsites/campsitesSlice';
+import { fetchPromotions } from '../features/promotions/promotionsSlice';
+import { fetchComments } from '../features/comments/commentsSlice';
+import FavoritesScreen from './FavoritesScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -85,6 +93,52 @@ const ContactNavigator = () => {
 	)
 }
 
+const ReservationNavigator = () => {
+	const Stack = createStackNavigator()
+	return (
+		<Stack.Navigator screenOptions={screenOptions}>
+			<Stack.Screen
+				name='Reservation'
+				component={ReservationScreen}
+				options={({ navigation }) => ({
+					title: 'Reservation Search',
+					headerLeft: () => (
+						<Icon
+							name='tree'
+							type='font-awesome'
+							iconStyle={styles.stackIcon}
+							onPress={() => navigation.toggleDrawer()}
+						/>
+					),
+				})}
+			/>
+		</Stack.Navigator>
+	)
+}
+
+const FavoritesNavigator = () => {
+	const Stack = createStackNavigator()
+	return (
+		<Stack.Navigator screenOptions={screenOptions}>
+			<Stack.Screen
+				name='Favorites'
+				component={FavoritesScreen}
+				options={({ navigation }) => ({
+					title: 'Favorite Campsites',
+					headerLeft: () => (
+						<Icon
+							name='heart'
+							type='font-awesome'
+							iconStyle={styles.stackIcon}
+							onPress={() => navigation.toggleDrawer()}
+						/>
+					),
+				})}
+			/>
+		</Stack.Navigator>
+	)
+}
+
 const DirectoryNavigator = () => {
     const Stack = createStackNavigator();
     return (
@@ -132,6 +186,15 @@ const CustomDrawerContent = (props) => (
 )
 
 const Main = () => {
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(fetchCampsites());
+		dispatch(fetchPromotions());
+		dispatch(fetchPartners());
+		dispatch(fetchComments());
+	}, [dispatch]);
+
 	return (
 		<View
 			style={{
@@ -140,7 +203,7 @@ const Main = () => {
 			}}>
 			<Drawer.Navigator
 				initialRouteName='Home'
-                drawerContent={CustomDrawerContent}
+				drawerContent={CustomDrawerContent}
 				drawerStyle={{ backgroundColor: '#CEC8FF' }}>
 				<Drawer.Screen
 					name='Home'
@@ -166,6 +229,38 @@ const Main = () => {
 						drawerIcon: ({ color }) => (
 							<Icon
 								name='list'
+								type='font-awesome'
+								size={24}
+								iconStyle={{ width: 24 }}
+								color={color}
+							/>
+						),
+					}}
+				/>
+				<Drawer.Screen
+					name='ReserveCampsite'
+					component={ReservationNavigator}
+					options={{
+						title: 'Reserve Campsite',
+						drawerIcon: ({ color }) => (
+							<Icon
+								name='tree'
+								type='font-awesome'
+								size={24}
+								iconStyle={{ width: 24 }}
+								color={color}
+							/>
+						),
+					}}
+				/>
+				<Drawer.Screen
+					name='Favorites'
+					component={FavoritesNavigator}
+					options={{
+						title: 'My Favorites',
+						drawerIcon: ({ color }) => (
+							<Icon
+								name='heart'
 								type='font-awesome'
 								size={24}
 								iconStyle={{ width: 24 }}
@@ -203,7 +298,7 @@ const Main = () => {
 								iconStyle={{ width: 24 }}
 								color={color}
 							/>
-						)
+						),
 					}}
 				/>
 			</Drawer.Navigator>
