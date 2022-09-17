@@ -139,7 +139,21 @@ const RegisterTab = () => {
 		}
 	}
 
+	const getImageFromGallery = async () => {
+		const mediaLibraryPermission =
+			await ImagePicker.requestMediaLibraryPermissionsAsync()
 
+		if (mediaLibraryPermission.status === 'granted') {
+			const capturedImage = await ImagePicker.launchImageLibraryAsync({
+				allowsEditing: true,
+				aspect: [1, 1],
+			})
+			if (!capturedImage.cancelled) {
+				console.log(capturedImage)
+				processImage(capturedImage.uri)
+			}
+		}
+	}
 
 	const getImageFromCamera = async () => {
 		const cameraPermission = await ImagePicker.requestCameraPermissionsAsync()
